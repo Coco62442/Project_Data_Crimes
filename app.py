@@ -5,7 +5,6 @@ import numpy as np
 from geoviews import dim
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 from shiny import ui, render, App
 
 # Create some random data
@@ -18,7 +17,7 @@ app_ui = ui.page_fixed(
         This app is based on a [Matplotlib example][0] that displays 2D data
         with a user-adjustable colormap. We use a range slider to set the data
         range that is covered by the colormap.
-
+zazaeze
         [0]: https://matplotlib.org/3.5.3/gallery/userdemo/colormap_interactive_adjustment.html
     """),
     ui.layout_sidebar(

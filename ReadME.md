@@ -6,3 +6,5 @@ Do the command ```pip install``` followed by the packages :
 - panda
 - numpy
 - shiny
+- ipleaflet
+- shinywidgets
