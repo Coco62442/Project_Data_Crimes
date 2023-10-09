@@ -24,6 +24,10 @@ def custom_to_numeric(value):
     except (ValueError, TypeError):
         return str(value) + ' '
     
+# Créez deux DataFrames vides pour Services PN et Services GN
+df_services_pn = pd.DataFrame()
+df_services_gn = pd.DataFrame()
+
 # Parcourez chaque fichier CSV dans le dossier d'entrée
 for fichier in fichiers_entree:
     chemin_fichier_entree = os.path.join(dossier_entree, fichier)
@@ -35,6 +39,12 @@ for fichier in fichiers_entree:
     
     # Charger le fichier CSV
     df = pd.read_csv(chemin_fichier_entree)
+    
+    # Filtrez les lignes en fonction d'une condition
+    condition = df['Départements'] != 'Périmètres'
+    df = df[condition]
+    condition = ~df['Départements'].str.startswith("Libellé")
+    df = df[condition]
 
     # Renommer les colonnes en tant qu'entiers si possible
     for i in df.columns:
@@ -42,7 +52,13 @@ for fichier in fichiers_entree:
             entier = int(float(i))
             df.rename(columns={i: entier}, inplace=True)
         except ValueError:
-            pass
+            # Si i correspond à la chaîne de caractère qui commence par "2A" ou "2B" alors on remplace par "2A" ou "2B"
+            if i.startswith("2A") :
+                df.rename(columns={i : "2A"}, inplace=True)
+            elif i.startswith("2B"):
+                df.rename(columns={i : "2B"}, inplace=True)
+            else:
+                pass
 
     # Appliquer la fonction personnalisée à chaque élément du DataFrame
     df = df.map(custom_to_numeric)
@@ -54,6 +70,42 @@ for fichier in fichiers_entree:
     nom_fichier_sortie = os.path.splitext(fichier)[0] + '.csv'
     chemin_fichier_sortie = os.path.join(dossier_sortie, nom_fichier_sortie)
     df_grouped.to_csv(chemin_fichier_sortie, index=False)
+    
+    # Extraire l'année à partir du nom du fichier (assumant que le nom suit un certain format)
+    annee = fichier.split()[-1].split('.')[0]
+
+    # Ajoutez une colonne "Année" avec la valeur extraite
+    df_grouped['Year'] = annee
+    
+    # Vérifiez le type de service (PN ou GN) à partir du nom du fichier
+    if "PN" in fichier:
+        df_services_pn = pd.concat([df_services_pn, df_grouped], ignore_index=True)
+    elif "GN" in fichier:
+        df_services_gn = pd.concat([df_services_gn, df_grouped], ignore_index=True)
+
+# Suppression des colonnes qui commencent par "Année"
+df_services_pn = df_services_pn[df_services_pn.columns.drop(list(df_services_pn.filter(regex='^Année')))]
+df_services_gn = df_services_gn[df_services_gn.columns.drop(list(df_services_gn.filter(regex='^Année')))]
+
+# Remplacer les cases vides par la valeur 0
+df_services_pn = df_services_pn.fillna(0)
+df_services_gn = df_services_gn.fillna(0)
+
+# Trier les colonnes du dataFrame en fonction de la colonne "Départements" puis de la colonne "Year" puis dans l'ordre croissant
+df_services_pn = df_services_pn[['Départements', 'Year', '2A', '2B'] + sorted(df_services_pn.columns.difference(['Départements', 'Year', '2A', '2B']))]
+df_services_gn = df_services_gn[['Départements', 'Year', '2A', '2B'] + sorted(df_services_gn.columns.difference(['Départements', 'Year', '2A', '2B']))]
+
+# Trier les lignes du dataFrame en fonction de la colonne "Year"
+df_services_pn = df_services_pn.sort_values(by=['Year'])
+df_services_gn = df_services_gn.sort_values(by=['Year'])
+
+# Renommer la colonne "Year" en "Année"
+df_services_pn.rename(columns={'Year': 'Année'}, inplace=True)
+df_services_gn.rename(columns={'Year': 'Année'}, inplace=True)
+
+# Enregistrez les DataFrames dans deux fichiers CSV
+df_services_pn.to_csv(os.path.join(dossier_sortie, 'Services PN.csv'), index=False)
+df_services_gn.to_csv(os.path.join(dossier_sortie, 'Services GN.csv'), index=False)
 
 #########################################################################################################################################################
 ####### La partie suivante concerne le fichier dataLess qui a servi de test pour créer le programme au dessus qui le fait pour toutes les données #######
@@ -64,12 +116,25 @@ for fichier in fichiers_entree:
 # # Récupérer le fichier .csv (dataLess.csv) dans le dossier (entrainementCSV)
 # df = pd.read_csv("entrainementCSV/dataLess.csv")
 
+# # Filtrez les lignes en fonction d'une condition
+# condition = df['Départements'] != 'Périmètres'
+# df = df[condition]
+# condition = df['Départements'] != 'Libellé index \ CSP'
+# df = df[condition]
+
+
 # for i in df.keys():
 #     try:
 #         entier = int(float(i))
 #         df.rename(columns={i : entier}, inplace=True)
 #     except ValueError:
-#         print(i)
+#         # Si i correspond à la chaîne de caractère qui commence par "2A" ou "2B" alors on remplace par "2A" ou "2B"
+#         if i.startswith("2A") :
+#             df.rename(columns={i : "2A"}, inplace=True)
+#         elif i.startswith("2B"):
+#             df.rename(columns={i : "2B"}, inplace=True)
+#         else:
+#             pass
         
 # # Créez une fonction personnalisée pour convertir en float ou garder les chaînes de caractères non numériques
 # def custom_to_numeric(value):
@@ -85,4 +150,4 @@ for fichier in fichiers_entree:
 # df_grouped = df.T.groupby(level=0).sum().T
 
 # # Enregistrez le DataFrame dans un fichier CSV à côté
-# df_grouped.to_csv('resultat.csv', index=False)
+# df_grouped.to_csv('entrainementCSV/resultat.csv', index=False)
