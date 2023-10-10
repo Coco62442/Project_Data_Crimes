@@ -40,10 +40,13 @@ for fichier in fichiers_entree:
     # Charger le fichier CSV
     df = pd.read_csv(chemin_fichier_entree)
     
+    # Renommer colonne "Départements" en "code"
+    df.rename(columns={'Départements': 'code'}, inplace=True)
+    
     # Filtrez les lignes en fonction d'une condition
-    condition = df['Départements'] != 'Périmètres'
+    condition = df['code'] != 'Périmètres'
     df = df[condition]
-    condition = ~df['Départements'].str.startswith("Libellé")
+    condition = ~df['code'].str.startswith("Libellé")
     df = df[condition]
 
     # Renommer les colonnes en tant qu'entiers si possible
@@ -91,9 +94,9 @@ df_services_gn = df_services_gn[df_services_gn.columns.drop(list(df_services_gn.
 df_services_pn = df_services_pn.fillna(0)
 df_services_gn = df_services_gn.fillna(0)
 
-# Trier les colonnes du dataFrame en fonction de la colonne "Départements" puis de la colonne "Year" puis dans l'ordre croissant
-df_services_pn = df_services_pn[['Départements', 'Year', '2A', '2B'] + sorted(df_services_pn.columns.difference(['Départements', 'Year', '2A', '2B']))]
-df_services_gn = df_services_gn[['Départements', 'Year', '2A', '2B'] + sorted(df_services_gn.columns.difference(['Départements', 'Year', '2A', '2B']))]
+# Trier les colonnes du dataFrame en fonction de la colonne "code" puis de la colonne "Year" puis dans l'ordre croissant
+df_services_pn = df_services_pn[['code', 'Year', '2A', '2B'] + sorted(df_services_pn.columns.difference(['code', 'Year', '2A', '2B']))]
+df_services_gn = df_services_gn[['code', 'Year', '2A', '2B'] + sorted(df_services_gn.columns.difference(['code', 'Year', '2A', '2B']))]
 
 # Trier les lignes du dataFrame en fonction de la colonne "Year"
 df_services_pn = df_services_pn.sort_values(by=['Year'])
