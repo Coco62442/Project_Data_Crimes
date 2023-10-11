@@ -6,7 +6,7 @@ import json
 import geopandas as gpd
 
 # Charger les données GeoJSON depuis le fichier
-geojson_file = './originalData/departements-version-simplifiee.geojson'
+geojson_file = '../dataCorrectedGeoJSON/cleanGeoJSON.geojson'
 data = gpd.read_file(geojson_file)
 
 # Convert the GeoDataFrame to a GeoJSON dictionary
@@ -14,19 +14,19 @@ geojson_data = json.loads(data.to_json())
 
 
 def choose_color(d):
-        if d > 1000:
+        if d > 250:
             return '#800026' 
-        elif d > 500: 
+        elif d > 200: 
             return '#BD0026'  
-        elif d > 200:  
+        elif d > 150:  
             return '#E31A1C'
         elif d > 100:  
             return '#FC4E2A'
-        elif d > 50:  
+        elif d > 75:  
             return '#FD8D3C'
-        elif d > 20:  
+        elif d > 50:  
             return '#FEB24C'
-        elif d > 10:  
+        elif d > 25:  
             return '#FED976' 
         else:
             return '#FFEDA0'
@@ -54,11 +54,12 @@ def server(input, output, session):
 
     # Create a GeoJSON layer and add it to the map (2)
     geojson_layer = L.GeoJSON(data=geojson_data, style=lambda feature: {
-        'fillColor': choose_color(feature['properties']['your_property']),
+        'fillColor': choose_color(feature['2019']['crime']),
         'fillOpacity': 0.7,
         'color': 'black',
         'weight': 1,
     })
+    geojson_layer = L.GeoJSON(data=geojson_data)
     map.add_layer(geojson_layer)
 
     # When the slider changes, update the map's zoom attribute (2)
