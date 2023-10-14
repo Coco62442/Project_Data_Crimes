@@ -52,7 +52,7 @@ def server(input, output, session):
     @reactive.Effect
     def _():
         # Afficher la carte choroplèthe
-        geoJ.plot(column='', cmap='coolwarm', ax=ax, legend=True)
+        geoJ.plot(column=input., cmap='coolwarm', ax=ax, legend=True)
 
     # Personnaliser la carte
     ax.set_title('Carte Choroplèthe en fonction des valeurs')

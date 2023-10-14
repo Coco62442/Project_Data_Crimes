@@ -8,3 +8,4 @@ Do the command ```pip install``` followed by the packages :
 - shiny
 - ipleaflet
 - shinywidgets
+- openpyxl
