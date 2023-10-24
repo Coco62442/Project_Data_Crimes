@@ -11,12 +11,32 @@ ui <- fluidPage(
         titlePanel("Carte intéractive"),
         sidebarLayout(
           sidebarPanel(
-            radioButtons(
-              "selected_year",  # Nom de l'input
+            selectInput(
+              'selected_year',
               "Sélectionnez une année :",
-              choices = 2012:2021,  # Plage d'années
-              selected = 2021  # Année par défaut sélectionnée
+              choices = 2012:2020,
+              selected = 2020,
+              multiple = FALSE,
+              selectize = TRUE,
+              width = NULL,
+              size = NULL
+            ),
+            selectInput(
+              'selected_criterion',
+              "Sélectionnez un critère",
+              choices={
+                c("Crime de fou furieux"="Crime",
+                "Violence de fou furieux"="Violence",
+                "Vol de fou furieux"="Vol")
+              },
+              selected = NULL,
+              multiple = FALSE,
+              selectize = TRUE,
+              width = NULL,
+              size = NULL
             )
+            
+            
           ),
         # Show a plot of the generated distribution
         mainPanel(
