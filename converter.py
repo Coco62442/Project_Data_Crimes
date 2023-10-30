@@ -20,6 +20,8 @@ if not os.path.exists(dossier_sortie):
     os.makedirs(dossier_sortie)
 
 for sheetName in df.keys():
+    if sheetName == "Présentation":
+        continue
     df[sheetName].to_csv(dossier_sortie + sheetName + ".csv", index=False)
 
 print("Conversion terminée")

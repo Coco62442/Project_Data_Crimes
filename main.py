@@ -21,6 +21,16 @@ if not os.path.exists(dossier_sortie):
 # Liste tous les fichiers CSV dans le dossier d'entrée
 fichiers_entree = [f for f in os.listdir(dossier_entree) if f.endswith('.csv')]
 
+# Convertissez les valeurs en nombres en conservant "2A" et "2B"
+def custom_to_numeric(x):
+    if x == "2A" or x == "2B":
+        return x
+    try:
+        return pd.to_numeric(x)
+    except:
+        return x
+
+
 for i in fichiers_entree:
         
     df = pd.read_csv(dossier_entree + '/' + i)
@@ -103,7 +113,7 @@ for i in fichiers_entree:
     df_transpose.columns = df_transpose.columns.str.strip()
 
     # Convertissez les valeurs en nombres (si elles ne le sont pas déjà)
-    df_transpose = df_transpose.apply(pd.to_numeric, errors='coerce')
+    df_transpose = df_transpose.map(custom_to_numeric)
 
     # Groupez les colonnes identiques et faites la somme des valeurs
     df_transpose = df_transpose.T.groupby(level=0).sum().T
