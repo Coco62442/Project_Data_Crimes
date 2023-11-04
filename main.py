@@ -145,13 +145,12 @@ for i in fichiers_entree:
     # Supprimer à partir de la colonne 8
     df = df.drop(df.columns[8:], axis=1)
     # Supprimer les colonnes de 3 à 7
-    df = df.drop(df.columns[2:7], axis=1)
+    df = df.drop(df.columns[1:7], axis=1)
 
     column1 = "code"
-    column2 = "nom"
-    column3 = "population"
+    column2 = "population"
     # Renommer les cléfs
-    df = df.rename(columns={df.columns[0]: column1, df.columns[1]: column2, df.columns[2]: column3})
+    df = df.rename(columns={df.columns[0]: column1, df.columns[1]: column2})
 
 
     # Enregistrez le DataFrame résultant dans un nouveau fichier CSV
