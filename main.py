@@ -120,3 +120,39 @@ for i in fichiers_entree:
 
     # Enregistrez le DataFrame résultant dans un nouveau fichier CSV
     df_transpose.to_csv(dossier_sortie + '/' + i, index=False)
+
+# Dossier contenant les fichiers CSV d'entrée
+dossier_entree = "dataPopulationCSV"
+
+# Dossier de sortie pour les fichiers corrigés
+dossier_sortie = "dataForR/Population"
+
+# Créez le dossier de sortie s'il n'existe pas
+if not os.path.exists(dossier_sortie):
+    os.makedirs(dossier_sortie)
+
+# Liste tous les fichiers CSV dans le dossier d'entrée
+fichiers_entree = [f for f in os.listdir(dossier_entree) if f.endswith('.csv')]
+
+for i in fichiers_entree:
+
+    df = pd.read_csv(dossier_entree + '/' + i)
+
+    # Supprimmer les 4 premières lignes du dataFrame
+    df = df.iloc[4:]
+    df = df.iloc[:-9]
+
+    # Supprimer à partir de la colonne 8
+    df = df.drop(df.columns[8:], axis=1)
+    # Supprimer les colonnes de 3 à 7
+    df = df.drop(df.columns[2:7], axis=1)
+
+    column1 = "code"
+    column2 = "nom"
+    column3 = "population"
+    # Renommer les cléfs
+    df = df.rename(columns={df.columns[0]: column1, df.columns[1]: column2, df.columns[2]: column3})
+
+
+    # Enregistrez le DataFrame résultant dans un nouveau fichier CSV
+    df.to_csv(dossier_sortie + '/' + i, index=False)

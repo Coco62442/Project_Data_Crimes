@@ -26,6 +26,24 @@ for sheetName in df.keys():
 
 print("Conversion terminée")
 
+# Nom du fichier de données
+fileName = "originalData/population_dprts.xlsx"
+# Nom du dossier de sortie
+dossier_sortie = "dataPopulationCSV/"
+
+df = pd.read_excel(fileName, sheet_name=None)
+
+# Créez le dossier de sortie s'il n'existe pas
+if not os.path.exists(dossier_sortie):
+    os.makedirs(dossier_sortie)
+
+for sheetName in df.keys():
+    if sheetName == "À savoir.csv" or sheetName < "2012" or sheetName > "2021":
+        continue
+    df[sheetName].to_csv(dossier_sortie + sheetName + ".csv", index=False)
+
+print("Conversion terminée")
+
 #########################################################################################################################################################
 ####### La partie suivante concerne le fichier dataLess qui a servi de test pour créer le programme au dessus qui le fait pour toutes les données #######
 #########################################################################################################################################################
